@@ -1,0 +1,26 @@
+{
+    "FOCI-hist":
+        {
+            "expid" : "FOCI2.2-SW224", 
+            "version" : "FOCI2.2", 
+            "experiment_id" : "historical", 
+            "startdate" : "1850-01-01", 
+            "enddate" : "2014-12-31"
+        },
+    "FOCI-OpenIFS-hist": 
+        {
+            "expid" : "FOCI_GJK030_r1i1p1", 
+            "version" : "FOCI-OpenIFS-3.0" ,
+            "experiment_id" : "historical" ,
+            "startdate" : "1850-01-01", 
+            "enddate" : "2014-12-31",
+            "acc_period" : 21600 
+        },
+    "FOCI-OpenIFS-ctrl":
+        {
+            "expid" : "FOCI_GJK029" , 
+            "version" : "FOCI-OpenIFS-3.0" , 
+            "experiment_id" : "piControl" , 
+            "acc_period" : 21600 
+        }
+}

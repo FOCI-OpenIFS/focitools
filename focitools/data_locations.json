@@ -1,0 +1,18 @@
+{
+    "nesh" :
+    {
+        "focioifs_dir" : "/gxfs_work/geomar/smomw352/esm-experiments/", 
+        "foci_dir" : "/gxfs_work/geomar/smomw580/esm-experiments/",
+        "mesh_mask" : "/gxfs_work/geomar/smomw352/orca05_mesh_mask.nc",
+        "maskglo" : "/gxfs_work/geomar/smomw352/new_maskglo.nc"
+    },
+
+    "geomar" :
+    {
+        "focioifs_dir" : "/Projekte/fb1-me-foci/focioifs/DECK/",
+        "foci_dir" : "/Projekte/fb1-me-foci/foci2.2/esm-experiments/",
+        "mesh_mask" : "/Projekte/fb1-me-foci/foci_input/NEMO/masks/mesh_mask.nc", 
+        "maskglo" : "/Projekte/fb1-me-foci/foci_input/NEMO/masks/new_maskglo.nc" 
+    }
+    
+}
