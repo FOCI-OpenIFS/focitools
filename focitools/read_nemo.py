@@ -2,7 +2,8 @@ import xarray as xr
 import cftime
 from focitools import functions
 
-def read_nemo(exp_list, time_list, esm_dir, grid='grid_T', freq='1m', decode_timedelta=True):
+def read_nemo(exp_list, time_list, esm_dir, 
+              grid='grid_T', freq='1m', agrif_prefix='', decode_timedelta=True):
     """
     Read output from NEMO
 
@@ -15,6 +16,7 @@ def read_nemo(exp_list, time_list, esm_dir, grid='grid_T', freq='1m', decode_tim
     grid - e.g. grid_T, grid_U, icemod, ptrc_T, etc. Default: grid_T
     freq - e.g. 1m, 5d. Default: 1m
     decode_timedelta - Decode time differences (True) or not (False). Default: True
+    agrif_prefix - Prefix for AGRIF files, e.g. 1_. Default: empty string
 
     Note: 
     Xarray decodes timedelta to nanoseconds, which overflow after approx 300 years 
@@ -25,11 +27,12 @@ def read_nemo(exp_list, time_list, esm_dir, grid='grid_T', freq='1m', decode_tim
     # list for all data
     ds_all = []
     for exp,time in zip(exp_list,time_list):
-        
+
+        # Note: In case of AGRIF, all files will have a prefix of 1_ or 2_ 
         if freq == '1y':
-            files = '%s/%s/outdata/nemo/ym/%s*1y*%s.nc' % (esm_dir,exp,exp,grid)
+            files = '%s/%s/outdata/nemo/ym/%s%s*1y*%s.nc' % (esm_dir,exp,agrif_prefix,exp,grid)
         else:
-            files = '%s/%s/outdata/nemo/%s*%s*%s.nc' % (esm_dir,exp,exp,freq,grid)
+            files = '%s/%s/outdata/nemo/%s%s*%s*%s.nc' % (esm_dir,exp,agrif_prefix,exp,freq,grid)
         print(files)
         
         # use function to read multi-file data set
@@ -138,7 +141,17 @@ def read_transports(exp_list, time_list, machine='nesh'):
 
 
 def read_psi(exp_list, time_list, esm_dir):
-    
+    """
+    Read barotropic stream function as computed with CDFTOOLS in the nemo_monitoring.sh script
+
+    Input:
+    exp_list - List of experiments
+    time_list - List of time slices
+    esm_dir - dir to experiments, usually named esm_experiments
+
+    Output
+    ds_all - List with all Datasets 
+    """
     derived_list = ['psi']
     derived_name = ['psi']
     
@@ -150,15 +163,11 @@ def read_psi(exp_list, time_list, esm_dir):
         
         for i,(derived,name) in enumerate(zip(derived_list,derived_name)):
             
-            files = '%s/%s/derived/nemo/%s*%s.nc' % (esmdir,exp,exp,derived)
+            files = '%s/%s/derived/nemo/%s*%s.nc' % (esm_dir,exp,exp,derived)
             
-            # open multi-file data set. We need to use cftime since the normal python calendar stops working after 2300. 
-            # also, we rename time variable from time_counter to time to make life easier
-            ds = xr.open_mfdataset(files,combine='nested', 
-                                   concat_dim="time_counter", use_cftime=True,
-                                   data_vars='minimal', coords='minimal',
-                                   compat='override',parallel=True
-                                  ).rename({'time_counter':'time'}).sel(time=time)
+            # use function to read multi-file data set
+            # Will use cftime, read in parallel, etc. 
+            ds = functions.open_multifile_dataset(files).rename({'time_counter':'time'}).sel(time=time)
             
             ds_derived.append(ds)
         
