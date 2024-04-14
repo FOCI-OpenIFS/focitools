@@ -88,6 +88,30 @@ def zonal_mean_nemo(data, mask, cell_area, x_name='x', y_name='y', lat_name='nav
 # compute sea ice area
 #
 def seaice_areas(ds, areacello, lsm, sicname='ileadfra', latname='nav_lat'):
+    """
+    Compute sea-ice area and extent. 
+    
+    Sea-ice area (SIA) is total area of sea ice. 
+    Sea-ice extent (SIE) is total area where sea-ice conc exceeds 15%. 
+    
+    Do calculations separately for Northern and Southern Hemisphere
+    
+    Input: 
+    ds - Dataset with sea-ice fraction [0,1]. 
+    areacello - Area in m2 for ocean cells
+    lsm - Land-sea mask for ocean where 1 is ocean and 0 is land. 
+    sicname - Name of sea-ice concentration (default: ileadfra)
+    latname - Name of latitude array (default: nav_lat)
+    
+    Output
+    ds - Dataset with the following variables:
+         ar_sia - Arctic SIA
+         an_sia - Antarctic SIA
+         ar_sie - Arctic SIE
+         an_sie - Antarctic SIE
+         All are in million km2
+    """
+    
     
     # scale from m2 to million km2
     icescale = 1e-12
@@ -117,7 +141,29 @@ def seaice_areas(ds, areacello, lsm, sicname='ileadfra', latname='nav_lat'):
 
 
 def ice_volumes(ds, areacello, lsm, latname='nav_lat', xname='x', yname='y'):
+    """
+    Compute sea-ice volume and mean thickness. 
     
+    Sea-ice volume is the product of cell-averaged thickness and cell area
+    Sea-ice thickness is the volume divided by total area. 
+    
+    Do calculations separately for Northern and Southern Hemisphere. 
+    
+    Input: 
+    ds - Dataset with sea-ice fraction and cell-averaged thickness
+    areacello - Area of ocean cells
+    lsm - Land-sea mask where 1 is ocean and 0 is land. 
+    latname (optional) - Name of latitude array (default: nav_lat)
+    xname (optional) - Name of x dimension (default: x)
+    yname (optional) - Name of y dimension (default: y)
+    
+    Output: 
+    ds - Dataset containing the following variables
+         ar_siv - Arctic SIV
+         an_siv - Antarctic SIV
+         ar_sit - Arctic SIT (=SIV/SIA)
+         an_sit - Antarctic SIT (= SIV/SIA)
+    """
     # scale from m3 to km3
     icescale = 1e-9
     
