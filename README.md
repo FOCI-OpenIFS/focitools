@@ -16,7 +16,7 @@ Install
 Get source code
 ```bash
 cd /where/you/want/the/repo/to/end/up/
-git clone https://git.geomar.de/kjellsson_group/focitools.git
+git clone https://github.com/FOCI-OpenIFS/focitools.git
 ```
 
 Load the `py3_std` environment (see [jupyter_on_HPC_setup_guide](https://git.geomar.de/python/jupyter_on_HPC_setup_guide) for help)
