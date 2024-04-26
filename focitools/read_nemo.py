@@ -44,11 +44,7 @@ def read_nemo(exp_list, time_list, esm_dir,
     return ds_all
 
 
-def read_amoc(exp_list, time_list, machine='nesh', esmdir=''):
-    
-    if len(esmdir) == 0:
-        # find esm dir
-        esmdir = locate_esmdir(machine)
+def read_amoc(exp_list, time_list, esmdir):
     
     derived_list = ['moc','amoc_max_25.000N','amoc_max_45.000N']
     derived_name = ['moc','amoc25','amoc45']
@@ -63,34 +59,29 @@ def read_amoc(exp_list, time_list, machine='nesh', esmdir=''):
             
             files = '%s/%s/derived/nemo/%s*%s.nc' % (esmdir,exp,exp,derived)
             
-            # open multi-file data set. We need to use cftime since the normal python calendar stops working after 2300. 
-            # also, we rename time variable from time_counter to time to make life easier
-            ds = xr.open_mfdataset(files,combine='nested', 
-                                   concat_dim="time_counter", use_cftime=True,
-                                   data_vars='minimal', coords='minimal',
-                                   compat='override',parallel=True
-                                  ).rename({'time_counter':'time'}).sel(time=time)
+            # use function to read multi-file data set
+            # Will use cftime, read in parallel, etc. 
+            ds = functions.open_multifile_dataset(files).rename({'time_counter':'time'}).sel(time=time)
             
             # For overturning stream functions, add latitude on y coord
             if i == 0:
                 lat = ds['nav_lat'][:,0].data
                 ds = ds.assign_coords(lat=("y", lat))
             
+            # Rename AMOC_MAX to amoc25 or amoc45
             if i > 0:
                 ds = ds.rename({'AMOC_MAX':name})
             
             ds_derived.append(ds)
         
+        # Merge into one dataset
         _ds = xr.merge(ds_derived)
         ds_all.append(_ds)
         
     return ds_all
 
 
-def read_transports(exp_list, time_list, machine='nesh'):
-    
-    # find esm dir
-    esmdir = locate_esmdir(machine)
+def read_transports(exp_list, time_list, esmdir):
     
     transp_list = ['AFR_AUSTR','AM_AFR','AUS_AA','AUSTR_AM','BAFFIN','BERING',
                    'CAMPBELL','CUBA_FLORIDA','DAVIS','DENMARK_STRAIT','DRAKE',
@@ -107,13 +98,9 @@ def read_transports(exp_list, time_list, machine='nesh'):
             
             files = '%s/%s/derived/nemo/%s*%s_transports.nc' % (esmdir,exp,exp,transp)
             
-            # open multi-file data set. We need to use cftime since the normal python calendar stops working after 2300. 
-            # also, we rename time variable from time_counter to time to make life easier
-            ds = xr.open_mfdataset(files,combine='nested', 
-                                   concat_dim="time_counter", use_cftime=True,
-                                   data_vars='minimal', coords='minimal',
-                                   compat='override',parallel=True
-                                  ).rename({'time_counter':'time'}).sel(time=time)
+            # use function to read multi-file data set
+            # Will use cftime, read in parallel, etc. 
+            ds = functions.open_multifile_dataset(files).rename({'time_counter':'time'}).sel(time=time)
             
             # each transport file has its own nav_lon etc, 
             # so we cant just merge all datasets
