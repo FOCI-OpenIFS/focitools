@@ -1,4 +1,7 @@
 __pycache__  
 build  
+.ipynb_checkpoints/
+examples/.ipynb_checkpoints/
+examples/dask-worker-space/
 focitools.egg-info
-
+focitools/.ipynb_checkpoints
