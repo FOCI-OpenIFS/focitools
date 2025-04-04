@@ -4,4 +4,4 @@ build
 examples/.ipynb_checkpoints/
 examples/dask-worker-space/
 focitools.egg-info
-focitools/.ipynb_checkpoints
+focitools/.ipynb_checkpoints/*

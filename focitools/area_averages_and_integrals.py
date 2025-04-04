@@ -17,12 +17,15 @@ def area_mean(data, lon_name='lon', lat_name='lat'):
     data_mean - DataArray with area-weighted average
     """
 
+    # make a copy of array
+    data_copy = data.copy()
+    
     # cast longitude and latitude to radians
-    data[lon_name] = np.deg2rad(data[lon_name]) 
-    data[lat_name] = np.deg2rad(data[lat_name])
+    data_copy[lon_name] = np.deg2rad(data_copy[lon_name]) 
+    data_copy[lat_name] = np.deg2rad(data_copy[lat_name])
 
     # sort data so that we always have lon = [0,2pi], lat = [-pi/2, pi/2]
-    data_sorted = data.sortby('lon').sortby('lat')
+    data_sorted = data_copy.sortby('lon').sortby('lat')
     
     # area weighting can be done by weighting by cos(latitude)
     weights = np.cos(data_sorted.lat)
